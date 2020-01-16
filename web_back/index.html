@@ -111,31 +111,10 @@
 
     </script>
     <script src="js/jquery-1.12.4.min.js"></script>
-    <script>
-        //定义一个方法，退出和获取管理者
-        var user = {
-            tuichu: function () {
-                $.post('http://192.168.1.102:8000/admin/logout',
-                ).then(function () {
-                    if (res.code === 200) {
-                        window.location.href = "./login.html"
-                    } else {
-                        alert(res.msg)
-                    }
-                })
-            },
-            guanliyuan: function () {
-                $.get('http://192.168.1.102:8000/admin/getuser',
-                ).then(function (res) {
-                    if (res.code === 200) {
-                        $('#yonghuming').text(res.data.nickname)
-                        $('#img1').attr('src', res.data.user_pic)
-                        $('#img2').attr('src', res.data.user_pic)
-                    }
-                })
-            }
-        }
-    </script>
+    <script src="js/config.js"></script>
+
+    <script src="js/user.js"></script>
+
     <script>
         $(function () {
             // 2.点击退出，上传ajax，成功跳转
