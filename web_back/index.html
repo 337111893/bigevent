@@ -50,7 +50,7 @@
         <div class="user_center_link">
             <a href="user.html" onclick="setMenu(3,0)" target="main_frame">个人中心</a>
             <img id="img2" src="images/2.jpg" alt="person">
-            <a href="#" id="tuichu"><i class="iconfont icon-tuichu"></i> 退出</a>
+            <a href="javascript:;" id="tuichu"><i class="iconfont icon-tuichu"></i> 退出</a>
         </div>
     </div>
 
@@ -112,46 +112,40 @@
     </script>
     <script src="js/jquery-1.12.4.min.js"></script>
     <script>
+        //定义一个方法，退出和获取管理者
+        var user = {
+            tuichu: function () {
+                $.post('http://192.168.1.102:8000/admin/logout',
+                ).then(function () {
+                    if (res.code === 200) {
+                        window.location.href = "./login.html"
+                    } else {
+                        alert(res.msg)
+                    }
+                })
+            },
+            guanliyuan: function () {
+                $.get('http://192.168.1.102:8000/admin/getuser',
+                ).then(function (res) {
+                    if (res.code === 200) {
+                        $('#yonghuming').text(res.data.nickname)
+                        $('#img1').attr('src', res.data.user_pic)
+                        $('#img2').attr('src', res.data.user_pic)
+                    }
+                })
+            }
+        }
+    </script>
+    <script>
         $(function () {
-
             // 2.点击退出，上传ajax，成功跳转
             $('#tuichu').click(function () {
-                $.post('http://192.168.172.82:8000/admin/logout',
-                ).then(function () {
-                    window.location.href = "./login.html"
-                })
+                //退出语义化
+                user.tuichu()
             })
-
-
-            //3.获取管理员
-            $.get('http://192.168.172.82:8000/admin/getuser',
-            ).then(function (res) {
-                $('#yonghuming').text(res.data.nickname)
-                $('#img1').attr('src', res.data.user_pic)
-                $('#img2').attr('src', res.data.user_pic)
-            })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            //3.获取管理员语义化
+            user.guanliyuan()
         })
-
-
-
     </script>
 </body>
 
