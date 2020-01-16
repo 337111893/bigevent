@@ -120,10 +120,22 @@
             // 2.点击退出，上传ajax，成功跳转
             $('#tuichu').click(function () {
                 //退出语义化
-                user.tuichu()
+                user.tuichu().then(function (res) {
+                    if (res.code === 200) {
+                        window.location.href = "./login.html"
+                    } else {
+                        alert(res.msg)
+                    }
+                })
             })
             //3.获取管理员语义化
-            user.guanliyuan()
+            user.guanliyuan().then(function (res) {
+                if (res.code === 200) {
+                    $('#yonghuming').text(res.data.nickname)
+                    $('#img1').attr('src', res.data.user_pic)
+                    $('#img2').attr('src', res.data.user_pic)
+                }
+            })
         })
     </script>
 </body>
