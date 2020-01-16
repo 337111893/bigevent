@@ -25,9 +25,49 @@
                 <i class="iconfont icon-key"></i>
                 <input type="text" class="input_txt" placeholder="邮箱/手机号">
                 <input type="password" class="input_pass" placeholder="密码">
-                <input type="submit" class="input_sub" value="登 录">
+                <input type="button" class="input_sub" value="登 录">
             </form>
         </div>
-    </div> 
+    </div>
+    <script src="js/jquery-1.12.4.min.js"></script>
+    <script>
+        $(function () {
+            // 1.用户登录
+            // 思路：
+            // 给按钮加点击事件
+            // （1）获取信息，简单判断
+            $('.input_sub').click(function () {
+                var name = $('.input_txt').val().trim()
+                var password = $('.input_pass').val().trim()
+                // 判断不能为空
+                if (name == 0 || password == 0) {
+                    alert('输入不能为空')
+                }
+                // 输入争取上传ajax，上传成功跳转
+                $.post(
+                    'http://192.168.172.82:8000/admin/login',
+                    {
+                        user_name: name,
+                        password: password
+                    },
+                ).then(function (res) {
+                    // console.log(res);
+                    if (res.code === 200) {
+                        window.location.href = "./index.html"
+                    }
+                })
+
+
+
+
+
+            })
+        })
+
+
+
+
+    </script>
 </body>
+
 </html>
