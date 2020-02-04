@@ -21,7 +21,11 @@ var JKDIZHI = {
 
 
     //获取文章
-    article_get: DIZHI + '/admin/search'
+    article_get: DIZHI + '/admin/search',
+    // 删除文章
+    article_del: DIZHI + '/admin/article_delete',
+    // 添加文章
+    article_add: DIZHI + '/admin/article_publish'
 
 
 }

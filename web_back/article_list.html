@@ -30,11 +30,11 @@
                             <option>爱旅行</option> -->
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
-                            <option>所有状态</option>
-                            <option value="drafted">草稿</option>
-                            <option value="published">已发布</option>
+                            <option value="">所有状态</option>
+                            <option value="草稿">草稿</option>
+                            <option value="已发布">已发布</option>
                         </select>
-                        <button id="btnSearch" class="btn btn-default btn-sm">筛选</button>
+                        <button id="btnSearch" type="button" class="btn btn-default btn-sm">筛选</button>
                     </form>
                 </div>
                 <div class="col-xs-6">
@@ -69,8 +69,8 @@
             </table>
 
             <div class="row text-center">
-                <ul class="pagination pagination-sm">
-                    <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
+                <ul class="pagination pagination-sm" id="pagination">
+                    <!-- <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
                     <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
                     <li class="page-item active"><a href="#" class="page-link">1</a></li>
                     <li class="page-item"><a href="#" class="page-link">2</a></li>
@@ -80,7 +80,7 @@
                     <li class="page-item"><a href="#" class="page-link">6</a></li>
                     <li class="page-item"><a href="#" class="page-link">7</a></li>
                     <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
-                    <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
+                    <li class="page-item last"><a href="#" class="page-link">尾页</a></li> -->
                 </ul>
             </div>
 
@@ -97,11 +97,13 @@
     <script src="js/category.js"></script>
     <script src="js/article.js"></script>
     <script src="js/template-web.js"></script>
+    <script src="js/jquery.twbsPagination.js"></script>
+
     <!-- 对文章的类别 -->
     <script id="tmp_category" type="text/html">
-    	<option>所有分类</option>
+    	<option value="">所有分类</option>
         {{each data item}}
-    	<option>{{item.name}}</option>
+    	<option value="{{item.id}}">{{item.name}}</option>
         {{/each}}
     </script>
     <!-- 对文章列表 -->
@@ -114,35 +116,120 @@
             <td class="text-center">{{item.date}}</td>
             <td class="text-center">{{item.state}}</td>
             <td class="text-center">
-                <a href="post-edit.html?id=995" class="btn btn-default btn-xs">编辑</a>
-                <a href="javascript:deleteTr( 995 );" class="btn btn-danger btn-xs">删除</a>
+                <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
+                <a href="javascript:;" data-id="{{item.id}}" class="btn btn-danger btn-xs del">删除</a>
             </td>
         </tr>
         {{/each}}
     </script>
     <script>
+
+
+
+
+        // 全局变量 
+        var curPage = 1;    // 全局变量，表示当前要查询第几页的数据
+        var curType = '';   // 全局变量，表示当前要查询文章的类型编号
+        var curStatus = ''; // 全局变量，表示当前要查询文章的状态
+        var curTotalPage;   // 记录上一次获取的总页数
+
+
         // 1.获取所有的文章类别信息，并显示在下拉列表中
         // 调用接口，获取数据，用arttemplate渲染到表格
         category.get().then(function (res) {
             // console.log(res);
-
             // 渲染到页面
             var htmlStr = template('tmp_category', res)
             $("#selCategory").html(htmlStr)
         })
+
+
         // 2.获取文章列表，显示在表格
         // 调用接口，获取数据，用arttemplate渲染到表格
-        article.get().then(function (res) {
-            // console.log(res)
-            if (res.code === 200) {
-                // 渲染数据到表格
-                var htmlStr = template('tmp_table', res)
-                $('#tbody').html(htmlStr)
-            } else {
-                alert(res.msg)
-            }
+        function getAndShow() {
+            article.get(curPage, curType, curStatus).then(function (res) {
+                // console.log(res)
+                if (res.code === 200) {
+                    //1. 渲染数据到表格
+                    var htmlStr = template('tmp_table', res)
+                    $('#tbody').html(htmlStr)
+                    //2.  // 分页插件
+                    // 如果前后两次获取到总页码不一样，则要把分页插件：
+                    //   destroy()
+                    //   再来重新设置
+                    // 这样才能保存总页数显示正常
+                    if (curTotalPage !== res.totalPage) {
+                        $('#pagination').twbsPagination('destroy')
+                        curTotalPage = res.totalPage
+                    }
+                    $('#pagination').twbsPagination({
+                        totalPages: res.totalPage, // 总页数
+                        visiblePages: 6, // 可见页数
+                        first: '首页',
+                        prev: '上一页',
+                        next: '下一页',
+                        last: '尾页',
+                        initiateStartPageClick: false, // 初始时，不要去点击起始页
+                        onPageClick: function (event, page) {
+                            // 重新去取 第page页的数据
+                            curPage = page
+                            getAndShow();
+                            // alert(page);
+                        }
+                    });
+
+                } else {
+                    alert(res.msg)
+                }
+
+            })
+        }
+
+        getAndShow();
+
+
+        // 3. 文章筛选 
+        // 思路：
+        // （1）获取用户当前的选择
+        //  (2) 调用接口，传入用户的选项
+        $('#btnSearch').click(function () {
+            //    把页码重置为第一页
+            curPage = 1
+            // 把用户的选择保存到全局变量中
+            curType = $('#selCategory').val() // 文章类型编号
+            curStatus = $('#selStatus').val() // 文章状态
+            // console.log(curType, curStatus);
+            // 再去做查询并显示
+            getAndShow();
 
         })
+
+
+        // 4. 文章删除
+        // 思路：
+        // (1)给父容器加事件委托，实现删除按钮的点击
+        // (2)获取id，调用接口，根据反馈，做后续
+        $('#tbody').on('click', '.del', function () {
+            // 原则：让代码尽早结束
+            if (!confirm('你确定要删除吗？')) {
+                return
+            }
+
+            var id = $(this).attr('data-id')
+            // alert(id)
+            article.del(id).then(function (res) {
+                console.log(res);
+                if (res.code === 200) {
+                    // 删除成功
+                    // 重新获取
+                    getAndShow()
+                } else {
+                    alert(res.msg)
+                }
+            })
+        })
+
+
     </script>
 
 </body>
