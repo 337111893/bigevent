@@ -1,5 +1,6 @@
 //设置地址优化
-var DIZHI = 'http://192.168.0.114:8000'
+// var DIZHI = 'http://192.168.0.114:8000'
+var DIZHI = 'http://localhost:8000'
 
 var JKDIZHI = {
     //登录
@@ -12,11 +13,11 @@ var JKDIZHI = {
     category_get: DIZHI + '/admin/category_search',
 
 
-    //添加文章
+    //添加文章分类
     category_add: DIZHI + '/admin/category_add',
-    //删除文章
+    //删除文章分类
     category_del: DIZHI + '/admin/category_delete',
-    //编辑文章
+    //编辑文章分类
     category_edit: DIZHI + '/admin/category_edit',
 
 
@@ -25,7 +26,8 @@ var JKDIZHI = {
     // 删除文章
     article_del: DIZHI + '/admin/article_delete',
     // 添加文章
-    article_add: DIZHI + '/admin/article_publish'
-
+    article_add: DIZHI + '/admin/article_publish',
+    //编辑文章
+    article_edit: DIZHI + '/admin/article_edit'
 
 }

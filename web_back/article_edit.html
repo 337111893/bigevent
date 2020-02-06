@@ -11,10 +11,7 @@
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
     <link type="text/css" rel="stylesheet" href="js/jedate/css/jedate.css">
-    <script src="js/jquery-1.12.4.min.js"></script>
-    <script src="js/jedate/js/jedate.js"></script>
-    <script src="js/tinymce/js/tinymce/tinymce.min.js"></script>
-    <script src="js/tinymce/js/tinymce_setup.js"></script>
+
 </head>
 
 <body>
@@ -23,29 +20,25 @@
             文章编辑
         </div>
         <div class="container-fluid common_con">
-            <form class="form-horizontal article_form">
+            <form class="form-horizontal article_form" id="form">
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章标题：</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail3" value="文章标题文字">
+                        <input type="text" class="form-control" id="title" name="title" value="文章标题文字">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
-                        <img src="images/pic06.jpg" class="article_cover">
-                        <input type="file" id="exampleInputFile">
+                        <img src="images/pic06.jpg" id="previewImg" class="article_cover">
+                        <input type="file" id="exampleInputFile" name="cover">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control">
-                            <option>类别一</option>
-                            <option>类别二</option>
-                            <option>类别三</option>
-                            <option selected>类别四</option>
-                            <option>类别五</option>
+                        <select class="form-control" id="type" name="type">
+
                         </select>
                     </div>
                 </div>
@@ -54,7 +47,7 @@
                     <div class="col-sm-4">
 
                         <div class="input-group">
-                            <input type="text" class="form-control" value="2019-05-17" id="dateinput">
+                            <input type="text" class="form-control" name="date" value="2019-05-17" id="dateinput">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button"
                                     onclick="jeDate('#dateinput',{trigger:false,format: 'YYYY-MM-DD'})"><i
@@ -66,16 +59,98 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="rich_content" name="content" placeholder="文章内容" value="文章内容">
+                        <input type="text" class="form-control" id="rich_content" name="content" placeholder="文章内容"
+                            value="文章内容">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">修改</button>
+                        <button type="button" id="saveBtn" class="btn btn-success">修改</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+    <script src="js/jquery-1.12.4.min.js"></script>
+    <script src="js/template-web.js"></script>
+    <script src="js/jedate/js/jedate.js"></script>
+    <script src="js/tinymce/js/tinymce/tinymce.min.js"></script>
+    <script src="js/tinymce/js/tinymce_setup.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/article.js"></script>
+    <script src="js/category.js"></script>
+    <!-- 分类的模板 -->
+    <script id="cate" type="text/html">
+        {{each data item}}
+        <!-- <option value="{{item.id}}">{{item.name}}</option> -->
+        <option value="{{item.id}}">{{item.name}}</option>
+
+        {{/each}}
+    </script>
+
+    <script>
+        //主要的是先求类别在求文章详情，两部
+        // 1.获取id
+        var id = window.location.search.substr(4)
+        // 2.根据id获取信息，渲染在页面上
+
+        // 类别的方法，里面有信息的方法
+        getAndShowCategory();
+
+        // 3.保存
+        $('#saveBtn').click(function () {
+            var fd = new FormData(document.getElementById('form'))
+            fd.append("id", id)
+            // set 就是更新 键值对
+            fd.set('content', tinymce.activeEditor.getContent())
+            // 新添加的
+            article.edit(fd).then(function (res) {
+                if (res.code === 200) {
+                    alert('修改成功')
+                } else {
+                    alert(res.msg)
+                }
+            })
+        });
+        function getAndShow(id) {
+            article.getById(id).then(function (res) {
+                console.log(res);//先看看
+
+                if (res.code === 200) {
+                    // 把结果渲染在页面上：把数据填入到表单中
+                    $('#title').val(res.data.title)
+                    $('#previewImg').attr('src', res.data.cover)
+                    $('#dateinput').val(res.data.date)
+                    // 类别的显示
+                    $('#type').val(res.data.type)
+                    // 给富文件编辑器，设置内容，需要加延迟
+                    setTimeout(function () {
+
+                        tinymce.activeEditor.setContent(res.data.content)
+                    }, 1000)
+
+                } else {
+                    alert(res.msg)
+                }
+            })
+        };
+        function getAndShowCategory() {
+            category.get().then(function (res) {
+                console.log(res);
+                if (res.code === 200) {
+                    var htmlStr = template('cate', res)
+                    // console.log(htmlStr);
+                    // 写入选中
+                    $('#type').html(htmlStr)
+
+                    // 类别获取完成之后，再去获取文章详情
+                    getAndShow(id)
+                } else {
+                    alert(res.msg)
+                }
+            })
+        }
+    </script>
 </body>
+
 </html>
