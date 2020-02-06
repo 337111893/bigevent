@@ -9,6 +9,6 @@ var JKDIZHI = {
 
 
     //获取文章
-    article_get: DIZHI + '/admin/search',
+    article_get: DIZHI + '/search',
 
 }
