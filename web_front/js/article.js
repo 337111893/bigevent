@@ -25,5 +25,13 @@ var article = {
      */
     getLastest: function () {
         return $.get(JKDIZHI.article_last)
+    },
+    /***
+     * 在列表页中，用来获取文章列表数据
+     * type: 文章类型编号
+     * page: 当前第几页
+     */
+    getList: function (type, page) {
+        return $.get(JKDIZHI.article_get, { 'type': type, 'page': page })
     }
 }
