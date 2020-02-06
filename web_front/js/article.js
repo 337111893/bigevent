@@ -18,5 +18,12 @@ var article = {
      */
     getRank: function (type) {
         return $.get(JKDIZHI.article_rank, { 'type': type })
+    },
+
+    /**
+     * 获取最新的文章
+     */
+    getLastest: function () {
+        return $.get(JKDIZHI.article_last)
     }
 }

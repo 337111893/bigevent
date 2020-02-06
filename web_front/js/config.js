@@ -12,4 +12,7 @@ var JKDIZHI = {
 
     //热门文章排行
     article_rank: DIZHI + '/rank',
+
+    //最新资讯
+    article_last: DIZHI + '/lastest',
 }
