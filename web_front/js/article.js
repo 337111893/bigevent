@@ -12,5 +12,11 @@ var article = {
     getById: function (id) {
         return $.get(JKDIZHI.article_get, { 'id': id })
     },
-
+    /**
+     * 获取文章排行
+     * @param {*} type 
+     */
+    getRank: function (type) {
+        return $.get(JKDIZHI.article_rank, { 'type': type })
+    }
 }
