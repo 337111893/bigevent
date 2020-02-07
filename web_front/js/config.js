@@ -15,4 +15,13 @@ var JKDIZHI = {
 
     //最新资讯
     article_last: DIZHI + '/lastest',
+
+    // 获取文章详情
+    article_detail: DIZHI + '/article',
+
+    // 添加评论
+    comment_add: DIZHI + '/post_comment',
+
+    // 获取评论
+    comment_get: DIZHI + '/get_comments'
 }
