@@ -5,7 +5,7 @@ var comment = {
             {
                 'name': name,
                 'content': content,
-                'aritcle_id': id,
+                'article_id': id,
             }
         )
     },
