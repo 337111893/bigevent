@@ -226,6 +226,8 @@
     <script src="./js/config.js"></script>
     <script src="./js/category.js"></script>
     <script src="./js/article.js"></script>
+    <script src="./js/lazyload.js"></script>
+
     <!-- 文章类型的模板 -->
     <!-- 
         把当前的列表中对应的文章编号高亮显示
@@ -247,7 +249,9 @@
     <script id="tmpNews" type="text/html">
         {{each data item}}
             <div class="common_news_list">
-                <a href="./article.html?id={{item.id}}" class="list_pic"><img src="{{item.cover}}" alt=""></a>
+                <a href="./article.html?id={{item.id}}" class="list_pic">
+                        <img class="img" data-src="{{item.cover}}" alt="">
+                    </a>
                 <h4><a href="./article.html?id={{item.id}}">{{item.title}}</a></h4>
                 <p>{{item.content}}</p>
                 <div class="new_info">
@@ -338,6 +342,11 @@
                 // 数据渲染
                 console.log(htmlStr);
                 $('#list').html(htmlStr)
+                // 懒加载
+                $('.img').lazyload();
+
+
+
                 // 如果只有一页，则不需要显示分页条
                 if (res.pages <= 1) {
                     return
