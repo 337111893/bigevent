@@ -212,12 +212,16 @@
     <script src="./js/article.js"></script>
     <script src="./js/comment.js"></script>
 
+    <!-- //引入时间插件3个 -->
+    <script src="./js/dayjs/dayjs.min.js"></script>
+    <script src="./js/dayjs/relative.min.js"></script>
+    <script src="./js/dayjs/zh_cn.js"></script>
 
     <script id="tmp" type="text/html">
         {{each data item}}
         <div class="comment_detail_list">
             <div class="person_pic fl">{{item.name.substr(0,1)}}</div>
-            <div class="name_time fl"><b>{{item.name}}</b><span>{{item.dt}}</span></div>
+            <div class="name_time fl"><b>{{item.name}}</b><span>{{item.relativeTime}}</span></div>
             <div class="comment_text fl">
                 {{item.content}}
             </div>
@@ -226,6 +230,12 @@
     </script>
 
     <script>
+        // 引入插件语句
+        dayjs.locale('zh-cn')
+        dayjs.extend(dayjs_plugin_relativeTime)
+
+
+
         // 1. 获取从地址栏中传入的文章编号
         var id = location.search.substr(4)
         // alert(id)
@@ -278,7 +288,7 @@
             // - 调用接口，根据反馈做后续动作
             comment.add(name, content, id).then(function (res) {
                 // console.log(res);
-                debugger;
+                // debugger;
                 if (res.code === 200) {
                     // 成功
                     // 1. 清空评论区域
@@ -293,6 +303,13 @@
         function getComment() {
             comment.get(id).then(function (res) {
                 if (res.code == 200) {
+
+                    // 对数据的dt格式化，显示相对时间，同时修改模板
+                    res.data.forEach(function (item) {
+
+                        item.relativeTime = dayjs(item.dt).fromNow()
+
+                    })
                     var htmlStr = template('tmp', res)
                     console.log(htmlStr);
                     $('#comment_list').html(htmlStr)
