@@ -1,5 +1,5 @@
 // 所有与文章有关的
-var article = {
+const article = {
     // 获取5条焦点图
     getFouceFive: function (page, type, status) {
         // 就5张
@@ -10,14 +10,14 @@ var article = {
      * @param {数字} id 
      */
     getById: function (id) {
-        return $.get(JKDIZHI.article_get, { 'id': id })
+        return $.get(JKDIZHI.article_get, { id })
     },
     /**
      * 获取文章排行
      * @param {*} type 
      */
     getRank: function (type) {
-        return $.get(JKDIZHI.article_rank, { 'type': type })
+        return $.get(JKDIZHI.article_rank, { type })
     },
 
     /**
@@ -32,13 +32,13 @@ var article = {
      * page: 当前第几页
      */
     getList: function (type, page) {
-        return $.get(JKDIZHI.article_get, { 'type': type, 'page': page })
+        return $.get(JKDIZHI.article_get, { type, page })
     },
     /**
     * 获取文章详情
     * @param {*} id 文章编号
     */
     getDetail: function (id) {
-        return $.get(JKDIZHI.article_detail, { 'id': id })
+        return $.get(JKDIZHI.article_detail, { id })
     }
 }

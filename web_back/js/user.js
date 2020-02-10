@@ -1,6 +1,6 @@
 // 把所有与管理员相关的文件
 //定义一个方法，与用户相关的都放在这里
-var user = {
+const user = {
     //退出
     tuichu: function () {
         return $.post(JKDIZHI.user_tuichu,

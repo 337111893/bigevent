@@ -1,8 +1,8 @@
 //设置地址优化
 // var DIZHI = 'http://192.168.0.114:8000'
-var DIZHI = 'http://localhost:8000'
+const DIZHI = 'http://localhost:8000'
 
-var JKDIZHI = {
+const JKDIZHI = {
     //登录
     user_denglu: DIZHI + '/admin/login',
     //退出
